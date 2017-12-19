@@ -55,7 +55,10 @@ returnStmt = do
   return $ Ast.Return expr
 
 statement :: Parsec String () Ast.Statement
-statement = returnStmt
+statement = do
+  val <- returnStmt
+  semi
+  return val
 
 scope :: Parsec String () Ast.Scope
 scope = do
