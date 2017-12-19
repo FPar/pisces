@@ -3,17 +3,25 @@ module Ast where
 type Identifier = String
 
 data Atomic = Integer Integer
-            | Float Float
+            | Float Double
+  deriving Show
 
-data Expression = Atomic
+data Expression = Atomic Atomic
+  deriving Show
 
 data Statement = Assignment Identifier Expression
                | Return Expression
+  deriving Show
 
-newtype Scope = Scope [Expression]
+newtype Scope = Scope [Statement]
+  deriving Show
 
 data Prototype = Prototype Identifier [Identifier]
+  deriving Show
 data Func = Func Prototype Scope
+  deriving Show
 newtype Main = Main Scope
+  deriving Show
 
 data Program = Program Main [Func]
+  deriving Show
