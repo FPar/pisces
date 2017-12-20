@@ -25,8 +25,9 @@ addons:
     sources:
       - llvm-toolchain-trusty-4.0
     packages:
-      - libgmp-dev
       - clang-4.0
+      - libgmp-dev
+      - llvm-4.0
 
 before_install:
 # Download and unpack the stack executable
