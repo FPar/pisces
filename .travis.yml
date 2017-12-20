@@ -27,6 +27,7 @@ addons:
     packages:
       - clang-4.0
       - libgmp-dev
+      - libllvm4.0
       - llvm-4.0
 
 before_install:
