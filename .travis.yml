@@ -22,8 +22,11 @@ cache:
 # Ensure necessary system libraries are present
 addons:
   apt:
+    sources:
+      - llvm-toolchain-trusty-5.0
     packages:
       - libgmp-dev
+      - llvm-5.0
 
 before_install:
 # Download and unpack the stack executable
