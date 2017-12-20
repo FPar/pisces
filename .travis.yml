@@ -18,8 +18,8 @@ language: generic
 cache:
   directories:
   - $HOME/.stack
-  - $HOME/llvm-build-5.0.0
-  - $HOME/llvm-src-5.0.0
+  - $HOME/llvm-build-4.0.1
+  - $HOME/llvm-src-4.0.1
 
 # Ensure necessary system libraries are present
 addons:
@@ -29,7 +29,7 @@ addons:
 
 env:
   global:
-  - LLVM_VER=5.0.0
+  - LLVM_VER=4.0.1
 
 before_install:
 # Download and unpack the stack executable
