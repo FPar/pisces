@@ -1,7 +1,7 @@
 name:                pisces
 version:             0.1.0.0
 github:              ob-fun-ws17/studienarbeit-pisces
-license:             GPL3
+license:             GPL-3
 author:              Fabian Parzefall
 maintainer:          fabian.parzefall@mailbox.org
 copyright:           2017 Fabian Parzefall
@@ -21,6 +21,9 @@ description:         Please see the README on Github at <https://github.com/ob-f
 
 dependencies:
 - base >= 4.7 && < 5
+- bytestring
+- llvm-hs
+- llvm-hs-pure
 - parsec
 
 library:

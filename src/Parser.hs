@@ -1,8 +1,8 @@
 module Parser
-    ( parseProgram
+    ( parseUnit
     ) where
 
-import qualified Ast
+import qualified Lang
 import           Text.Parsec
 import           Text.Parsec.Expr
 import           Text.Parsec.Language
@@ -36,47 +36,47 @@ semi              = P.semi              lexer
 whiteSpace        = P.whiteSpace        lexer
 braces            = P.braces            lexer
 
-atomic :: Parsec String () Ast.Atomic
+atomic :: Parsec String () Lang.Atomic
 atomic = do
   val <- naturalOrFloat
   case val of
-    Left nat -> return $ Ast.Integer nat
-    Right float -> return $ Ast.Float float
+    Left nat -> return $ Lang.Integer nat
+    Right float -> return $ Lang.Float float
 
-expression :: Parsec String () Ast.Expression
+expression :: Parsec String () Lang.Expression
 expression = do
   val <- atomic
-  return $ Ast.Atomic val
+  return $ Lang.Atomic val
 
-returnStmt :: Parsec String () Ast.Statement
+returnStmt :: Parsec String () Lang.Statement
 returnStmt = do
   reserved "return"
   expr <- expression
-  return $ Ast.Return expr
+  return $ Lang.Return expr
 
-statement :: Parsec String () Ast.Statement
+statement :: Parsec String () Lang.Statement
 statement = do
   val <- returnStmt
   semi
   return val
 
-scope :: Parsec String () Ast.Scope
+scope :: Parsec String () Lang.Scope
 scope = do
   val <- braces $ many statement
-  return $ Ast.Scope val
+  return $ Lang.Scope val
 
-main :: Parsec String () Ast.Main
+main :: Parsec String () Lang.Main
 main = do
   reserved "func"
   reserved "main"
   parens whiteSpace
   val <- scope
-  return $ Ast.Main val
+  return $ Lang.Main val
 
-program :: Parsec String () Ast.Program
-program = do
+compilationUnit :: Parsec String () Lang.CompilationUnit
+compilationUnit = do
   mainVal <- main
-  return $ Ast.Program mainVal []
+  return $ Lang.CompilationUnit mainVal []
 
-parseProgram :: SourceName -> String -> Either ParseError Ast.Program
-parseProgram = parse program
+parseUnit :: SourceName -> String -> Either ParseError Lang.CompilationUnit
+parseUnit = parse compilationUnit

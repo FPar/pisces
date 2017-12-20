@@ -1,4 +1,4 @@
-module Ast where
+module Lang where
 
 type Identifier = String
 
@@ -23,5 +23,5 @@ data Func = Func Prototype Scope
 newtype Main = Main Scope
   deriving Show
 
-data Program = Program Main [Func]
+data CompilationUnit = CompilationUnit Main [Func]
   deriving Show
