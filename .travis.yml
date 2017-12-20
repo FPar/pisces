@@ -27,6 +27,10 @@ addons:
     packages:
     - libgmp-dev
 
+env:
+  global:
+  - LLVM_VER=5.0.0
+
 before_install:
 # Download and unpack the stack executable
 - mkdir -p ~/.local/bin
