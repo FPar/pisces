@@ -3,6 +3,7 @@ module Lexer
     , identifier
     , reserved
     , reservedOp
+    , rightArrow
     , parens
     , naturalOrFloat
     , float
@@ -21,7 +22,7 @@ languageDef =
            , P.commentLine     = "//"
            , P.identStart      = letter
            , P.identLetter     = alphaNum
-           , P.reservedNames   = [ "func"
+           , P.reservedNames   = [ "fn"
                                  , "return"
                                  ]
            , P.reservedOpNames = [ "+", "-", "*", "/", "="
@@ -32,10 +33,13 @@ languageDef =
 
 lexer = P.makeTokenParser languageDef
 
+symbol            = P.symbol            lexer
+
 colon             = P.colon             lexer
 identifier        = P.identifier        lexer
 reserved          = P.reserved          lexer
 reservedOp        = P.reservedOp        lexer
+rightArrow        = symbol "->"
 parens            = P.parens            lexer
 naturalOrFloat    = P.naturalOrFloat    lexer
 float             = P.float             lexer

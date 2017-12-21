@@ -13,14 +13,10 @@ compilationUnit :: Parsec String () Lang.CompilationUnit
 compilationUnit = Lang.CompilationUnit <$> many function
 
 function :: Parsec String () Lang.Function
-function = do
-  reserved "func"
-  name <- identifier
-  parameters <- parens $ many variableDeclaration
-  colon
-  returnType <- langType
-  definition <- block
-  return $ Lang.Function name parameters returnType definition
+function =
+  reserved "fn" >>
+    Lang.Function <$> identifier <*> parens (many variableDeclaration) >>=
+      \func -> rightArrow >> func <$> langType <*> block
 
 block :: Parsec String () Lang.Block
 block = Lang.Block <$> braces (many statement)
