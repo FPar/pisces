@@ -32,7 +32,7 @@ returnStmt :: Parsec String () Lang.Statement
 returnStmt = reserved "return" >> Lang.Return <$> expression
 
 variableDeclaration :: Parsec String () Lang.VariableDeclaration
-variableDeclaration = langType >>= \variableType -> Lang.VariableDeclaration variableType <$> identifier
+variableDeclaration = Lang.VariableDeclaration <$> identifier >>= \var -> colon >> var <$> langType
 
 langType :: Parsec String () Lang.Type
 langType = Lang.BuiltinType <$> identifier

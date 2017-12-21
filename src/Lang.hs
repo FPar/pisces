@@ -14,7 +14,7 @@ data Statement = Assignment Identifier Expression
                | Return Expression
   deriving Show
 
-data VariableDeclaration = VariableDeclaration Type Identifier
+data VariableDeclaration = VariableDeclaration Identifier Type
   deriving Show
 newtype Type = BuiltinType Identifier
   deriving Show
