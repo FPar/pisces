@@ -9,15 +9,14 @@ import LLVM.AST.Global
 import LLVM.AST.Type
 
 genLLVM :: Lang.CompilationUnit -> Module
-genLLVM (CompilationUnit main _) =
+genLLVM (CompilationUnit functions) =
   defaultModule { moduleName           = fromString "program"
-                , moduleSourceFileName = fromString "program.ps"
-                , moduleDefinitions    = [definition main]
+                , moduleDefinitions    = map definition functions
                 }
 
-definition :: Lang.Main -> Definition
-definition (Main scope) =
+definition :: Lang.Function -> Definition
+definition (Lang.Function name parameters returnType definition) =
   GlobalDefinition $
-    functionDefaults { name       = Name $ fromString "main"
+    functionDefaults { name       = Name $ fromString name
                      , returnType = i32
                      }

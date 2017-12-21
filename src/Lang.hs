@@ -2,26 +2,25 @@ module Lang where
 
 type Identifier = String
 
-data Atomic = Integer Integer
-            | Float Double
+newtype CompilationUnit = CompilationUnit [Function]
   deriving Show
 
-data Expression = Atomic Atomic
+data Function = Function Identifier [VariableDeclaration] Type Block
   deriving Show
 
+newtype Block = Block [Statement]
+  deriving Show
 data Statement = Assignment Identifier Expression
                | Return Expression
   deriving Show
 
-newtype Scope = Scope [Statement]
+data VariableDeclaration = VariableDeclaration Type Identifier
+  deriving Show
+newtype Type = BuiltinType Identifier
   deriving Show
 
-data Prototype = Prototype Identifier [Identifier]
+newtype Expression = Atomic Atomic
   deriving Show
-data Func = Func Prototype Scope
-  deriving Show
-newtype Main = Main Scope
-  deriving Show
-
-data CompilationUnit = CompilationUnit Main [Func]
+data Atomic = Integer Integer
+            | Float Double
   deriving Show
