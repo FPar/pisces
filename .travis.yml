@@ -65,4 +65,4 @@ script:
 - stack --no-terminal test --haddock --no-haddock-deps
 
 before_cache:
-- rm $HOME/llvm-src-${LLVM_VER}/build/{.ninja_log}
+- rm $HOME/llvm-src-${LLVM_VER}/build/.ninja_log
