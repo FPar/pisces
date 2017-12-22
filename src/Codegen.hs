@@ -26,5 +26,5 @@ definition (Lang.Function name parameters returnType def) =
 
 block :: Lang.Block -> BasicBlock
 block def =
-  let val = Int 4 4 in
+  let val = Int 32 4 in
   BasicBlock (fromString "__block") [] $ Do $ Ret (Just $ ConstantOperand val) []

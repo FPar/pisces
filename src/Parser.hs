@@ -1,3 +1,5 @@
+{-# LANGUAGE LambdaCase #-}
+
 module Parser
     ( parseUnit
     ) where
@@ -37,7 +39,7 @@ expression :: Parsec String () Lang.Expression
 expression = Lang.Atomic <$> atomic
 
 atomic :: Parsec String () Lang.Atomic
-atomic = naturalOrFloat >>= \value ->
-  case value of
+atomic = naturalOrFloat >>=
+  \case
     Left nat -> return $ Lang.Integer nat
     Right float -> return $ Lang.Float float

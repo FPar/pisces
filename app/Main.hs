@@ -1,5 +1,8 @@
+{-# LANGUAGE LambdaCase #-}
+
 module Main where
 
+import Control.Monad
 import qualified Data.ByteString.Char8 as BS
 import LLVM.Context
 import LLVM.Module
@@ -9,23 +12,20 @@ import Codegen
 import Parser
 
 main :: IO ()
-main = do
-  args <- getArgs
-  case args of
+main = getArgs >>=
+  \case
     [filename] -> compileFile filename
     []         -> putStrLn "No filename specified."
     _          -> putStrLn "Too many arguments specified."
 
 compileFile :: String -> IO ()
-compileFile filename = do
-  src <- readFile filename
-  let ast = parseUnit "" src
-  case ast of
-    Left err ->
-      print err
-    Right ast -> do
-      let mod = genLLVM ast
-      withContext $ \context ->
-        withModuleFromAST context mod $ \llmod -> do
-          llstr <- moduleLLVMAssembly llmod
-          BS.putStrLn llstr
+compileFile filename =
+  readFile filename >>= \src ->
+    let ast = parseUnit "" src in
+    case ast of
+      Left err ->
+        print err
+      Right ast ->
+        let llvmAST = genLLVM ast in
+        withContext $ \context ->
+          withModuleFromAST context llvmAST (moduleLLVMAssembly >=> BS.writeFile "a.ll")

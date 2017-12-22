@@ -30,7 +30,7 @@ library:
   source-dirs: src
 
 executables:
-  pisces-exe:
+  pscsc:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
