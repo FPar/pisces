@@ -29,7 +29,7 @@ addons:
 
 env:
   global:
-  - LLVM_VER=4.0.1
+  - LLVM_VER=5.0.1
 
 before_install:
 # Download and unpack the stack executable
