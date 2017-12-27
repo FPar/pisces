@@ -63,6 +63,3 @@ install:
 script:
 # Build the package, its tests, and its docs and run the tests
 - stack --no-terminal test --haddock --no-haddock-deps
-
-before_cache:
-- rm $HOME/llvm-src-${LLVM_VER}/build/.ninja_log
