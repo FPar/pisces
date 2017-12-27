@@ -16,10 +16,18 @@ data Statement = Assignment Identifier Expression
 
 data VariableDeclaration = VariableDeclaration Identifier Type
   deriving Show
-newtype Type = BuiltinType Identifier
+data Type = I64 | F64
   deriving Show
 
-newtype Expression = Atomic Atomic
+data Expression = Atomic Atomic
+                | Math MathOp Expression Expression
+                | Comparison BoolOp Expression Expression
+                | Negate Expression
+                | Invocation Function [Expression]
+  deriving Show
+data MathOp = Addition | Subtraction | Multiplication | Division | Modulo
+  deriving Show
+data BoolOp = Eq | Ne | Lt | Gt | Le | Ge
   deriving Show
 data Atomic = Integer Integer
             | Float Double

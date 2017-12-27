@@ -1,20 +1,21 @@
 module Lexer
-    ( colon
+    ( braces
+    , colon
+    , float
     , identifier
+    , natural
+    , naturalOrFloat
+    , parens
     , reserved
     , reservedOp
     , rightArrow
-    , parens
-    , naturalOrFloat
-    , float
     , semi
     , whiteSpace
-    , braces
     ) where
 
 import           Text.Parsec
 import           Text.Parsec.Language
-import qualified Text.Parsec.Token as P
+import qualified Text.Parsec.Token    as P
 
 languageDef =
   emptyDef { P.commentStart    = "/*"
@@ -35,14 +36,15 @@ lexer = P.makeTokenParser languageDef
 
 symbol            = P.symbol            lexer
 
+braces            = P.braces            lexer
 colon             = P.colon             lexer
+float             = P.float             lexer
 identifier        = P.identifier        lexer
+natural           = P.natural           lexer
+naturalOrFloat    = P.naturalOrFloat    lexer
+parens            = P.parens            lexer
 reserved          = P.reserved          lexer
 reservedOp        = P.reservedOp        lexer
 rightArrow        = symbol "->"
-parens            = P.parens            lexer
-naturalOrFloat    = P.naturalOrFloat    lexer
-float             = P.float             lexer
 semi              = P.semi              lexer
 whiteSpace        = P.whiteSpace        lexer
-braces            = P.braces            lexer
