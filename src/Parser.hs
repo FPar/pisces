@@ -17,26 +17,29 @@ compilationUnit :: Parsec String () CompilationUnit
 compilationUnit = CompilationUnit <$> many function
 
 function :: Parsec String () Function
-function =
-  reserved "fn" >>
-    Function <$> identifier <*> parens (many variableDeclaration) >>=
-      \func -> rightArrow >> func <$> langType <*> block
+function = do
+  reserved "fn"
+  ident <- identifier
+  parameters <- parens (many variableDeclaration)
+  retType <- optionMaybe (rightArrow >> langType)
+  definition <- block
+  return $ Function ident parameters retType definition
 
 block :: Parsec String () Block
 block = Block <$> braces (many statement)
 
 statement :: Parsec String () Statement
-statement = returnStmt >>= \stmt -> semi >> return stmt
+statement = returnStmt >>= \ stmt -> semi >> return stmt
 
 returnStmt :: Parsec String () Statement
 returnStmt = reserved "return" >> Return <$> expression
 
 variableDeclaration :: Parsec String () VariableDeclaration
-variableDeclaration = VariableDeclaration <$> identifier >>= \var -> colon >> var <$> langType
+variableDeclaration = VariableDeclaration <$> identifier >>= \ var -> colon >> var <$> langType
 
 langType :: Parsec String () Type
 langType = identifier >>=
-  \case
+  \ case
     "i64" -> return I64
     "f64" -> return F64
     _ -> fail "Invalid type."
@@ -65,6 +68,6 @@ postfix name fun = Postfix (reservedOp name >> return fun)
 
 atomic :: Parsec String () Atomic
 atomic = naturalOrFloat >>=
-  \case
+  \ case
     Left nat -> return $ Integer nat
     Right float -> return $ Float float

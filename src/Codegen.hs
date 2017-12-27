@@ -24,8 +24,8 @@ genLLVM (CompilationUnit functions) = buildModule "program" $ mapM genFunction f
 
 genFunction :: MonadModuleBuilder m => Lang.Function -> m Operand
 genFunction (Lang.Function name parameters returnType (Block definition)) =
-  function (fromString name) [] (llvmType returnType) $ \[] ->
-    block `named` "entry" >>= \entry -> mapM_ genStatement definition
+  function (fromString name) [] (llvmReturnType returnType) $ \[] ->
+    block `named` "entry" >> mapM_ genStatement definition
 
 genStatement :: MonadIRBuilder m => Lang.Statement -> m ()
 {-genStatement (Assignment ident expr) = ()-}
@@ -47,18 +47,9 @@ genAtomic :: Atomic -> Operand
 genAtomic (Integer i) = ConstantOperand (C.Int 64 i)
 genAtomic (Float f) = ConstantOperand (C.Float $ Double f)
 
-{-blocks :: [Lang.Statement] -> [BasicBlock]
-blocks [] =
-  [BasicBlock "entry" [] $ Do $ Ret (Just $ ConstantOperand (Int 32 0)) []]
-blocks stmts =
-  let ret = last stmts in
-  case ret of
-    Return (Atomic val) -> [BasicBlock "entry" [] $ Do $ Ret (Just $ constant val) []]
-    _ -> blocks []
-
-constant :: Atomic -> Operand
-constant a = case a of
-  Integer i -> ConstantOperand (Int 32 i)-}
+llvmReturnType :: ReturnType -> AST.Type
+llvmReturnType (Just t) = llvmType t
+llvmReturnType Nothing = VoidType
 
 llvmType :: Lang.Type -> AST.Type
 llvmType t =

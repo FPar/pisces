@@ -5,8 +5,10 @@ type Identifier = String
 newtype CompilationUnit = CompilationUnit [Function]
   deriving Show
 
-data Function = Function Identifier [VariableDeclaration] Type Block
+data Function = Function Identifier [VariableDeclaration] ReturnType Block
   deriving Show
+
+type ReturnType = Maybe Type
 
 newtype Block = Block [Statement]
   deriving Show
