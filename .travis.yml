@@ -25,7 +25,7 @@ cache:
 addons:
   apt:
     packages:
-    #- libgmp-dev
+    - libgmp-dev
 
 env:
   global:
@@ -56,10 +56,9 @@ install:
 - ninja -j4 install
 - cd $TRAVIS_BUILD_DIR
 - ln -s $HOME/llvm-build-${LLVM_VER}/bin/llvm-config $HOME/bin/llvm-config
-- llvm-config --version
 # Build dependencies
-#- stack --no-terminal --install-ghc test --only-dependencies
+- stack --no-terminal --install-ghc test --only-dependencies
 
 script:
 # Build the package, its tests, and its docs and run the tests
-#- stack --no-terminal test --haddock --no-haddock-deps
+- stack --no-terminal test --haddock --no-haddock-deps
