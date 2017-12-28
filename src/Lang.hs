@@ -12,7 +12,8 @@ type ReturnType = Maybe Type
 
 newtype Block = Block [Statement]
   deriving Show
-data Statement = Assignment Identifier Expression
+data Statement = Declaration Identifier Type (Maybe Expression)
+               | Assignment Identifier Expression
                | Return Expression
   deriving Show
 

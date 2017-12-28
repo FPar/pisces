@@ -29,20 +29,39 @@ block :: Parsec String () Block
 block = Block <$> braces (many statement)
 
 statement :: Parsec String () Statement
-statement = returnStmt >>= \ stmt -> semi >> return stmt
+statement = do
+  stmt <- returnStmt <|> varStmt
+  semi
+  return stmt
 
 returnStmt :: Parsec String () Statement
 returnStmt = reserved "return" >> Return <$> expression
+
+varStmt :: Parsec String () Statement
+varStmt = do
+  reserved "var"
+  name <- identifier
+  colon
+  t <- langType
+  let decl = Declaration name t
+  expr <- (reservedOp "=" >> Just <$> expression) <|> return Nothing
+  return $ decl expr
+
+assignmentStmt :: Parsec String () Statement
+assignmentStmt = do
+  target <- identifier
+  reservedOp "="
+  expr <- expression
+  return $ Assignment target expr
 
 variableDeclaration :: Parsec String () VariableDeclaration
 variableDeclaration = VariableDeclaration <$> identifier >>= \ var -> colon >> var <$> langType
 
 langType :: Parsec String () Type
-langType = identifier >>=
-  \ case
-    "i64" -> return I64
-    "f64" -> return F64
-    _ -> fail "Invalid type."
+langType =
+  try (symbol "i64" >> return I64) <|>
+  try (symbol "f64" >> return F64) <?>
+  "type."
 
 expression :: Parsec String () Expression
 expression = buildExpressionParser table term <?> "expression"

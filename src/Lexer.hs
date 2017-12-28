@@ -10,6 +10,7 @@ module Lexer
     , reservedOp
     , rightArrow
     , semi
+    , symbol
     , whiteSpace
     ) where
 
@@ -25,6 +26,7 @@ languageDef =
            , P.identLetter     = alphaNum
            , P.reservedNames   = [ "fn"
                                  , "return"
+                                 , "var"
                                  ]
            , P.reservedOpNames = [ "+", "-", "*", "/", "="
                                  , "==", "!=", "<", ">"

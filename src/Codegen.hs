@@ -30,6 +30,7 @@ genFunction (Lang.Function name parameters returnType (Block definition)) =
 genStatement :: MonadIRBuilder m => Lang.Statement -> m ()
 {-genStatement (Assignment ident expr) = ()-}
 genStatement (Return expr) = genExpression expr >>= ret
+genStatement (Declaration name langType Nothing) = return ()
 
 genExpression :: MonadIRBuilder m => Lang.Expression -> m Operand
 genExpression (Atomic a) = return $ genAtomic a
