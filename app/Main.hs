@@ -2,6 +2,8 @@
 
 module Main where
 
+import Lang
+
 import Control.Monad
 import qualified Data.ByteString.Char8 as BS
 import LLVM.Context
@@ -20,12 +22,17 @@ main = getArgs >>=
 
 compileFile :: String -> IO ()
 compileFile filename =
-  readFile filename >>= \src ->
-    let ast = parseUnit "" src in
-    case ast of
-      Left err ->
-        print err
-      Right ast ->
-        let llvmAST = genLLVM ast in
-        withContext $ \context ->
-          withModuleFromAST context llvmAST (moduleLLVMAssembly >=> BS.writeFile "a.ll")
+  loadUnit filename >>= \case
+    Left err ->
+      print err
+    Right unit ->
+      let llvmAST = genLLVM unit in
+      withContext $ \context ->
+        withModuleFromAST context llvmAST (moduleLLVMAssembly >=> BS.writeFile "a.ll")
+
+loadUnit :: String -> IO (Either String CompilationUnit)
+loadUnit filename = readFile filename >>= \ src ->
+  let cu = parseUnit "" src in
+  case cu of
+    Left err -> return $ Left $ show err
+    Right cu -> return $ Right cu

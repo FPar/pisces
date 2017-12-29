@@ -20,7 +20,7 @@ function :: Parsec String () Function
 function = do
   reserved "fn"
   ident <- identifier
-  parameters <- parens (many variableDeclaration)
+  parameters <- parens (commaSep parameterDeclaration)
   retType <- optionMaybe (rightArrow >> langType)
   definition <- block
   return $ Function ident parameters retType definition
@@ -54,8 +54,8 @@ assignmentStmt = do
   expr <- expression
   return $ Assignment target expr
 
-variableDeclaration :: Parsec String () VariableDeclaration
-variableDeclaration = VariableDeclaration <$> identifier >>= \ var -> colon >> var <$> langType
+parameterDeclaration :: Parsec String () ParameterDeclaration
+parameterDeclaration = ParameterDeclaration <$> identifier >>= \ var -> colon >> var <$> langType
 
 langType :: Parsec String () Type
 langType =
@@ -67,7 +67,7 @@ expression :: Parsec String () Expression
 expression = buildExpressionParser table term <?> "expression"
 
 term :: Parsec String () Expression
-term = parens expression <|> (Atomic <$> atomic) <?> "simple expression"
+term = parens expression <|> atomicOrVariable <?> "simple expression"
 
 table = [ [ binary "*" (Math Multiplication) AssocLeft
           , binary "/" (Math Division) AssocLeft
@@ -84,6 +84,9 @@ prefix :: String -> (a -> a) -> Operator String u Identity a
 prefix  name fun = Prefix (reservedOp name >> return fun)
 postfix :: String -> (a -> a) -> Operator String u Identity a
 postfix name fun = Postfix (reservedOp name >> return fun)
+
+atomicOrVariable :: Parsec String () Expression
+atomicOrVariable = Atomic <$> atomic <|> Variable <$> identifier
 
 atomic :: Parsec String () Atomic
 atomic = naturalOrFloat >>=

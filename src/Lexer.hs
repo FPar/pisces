@@ -1,6 +1,7 @@
 module Lexer
     ( braces
     , colon
+    , commaSep
     , float
     , identifier
     , natural
@@ -40,6 +41,7 @@ symbol            = P.symbol            lexer
 
 braces            = P.braces            lexer
 colon             = P.colon             lexer
+commaSep          = P.commaSep          lexer
 float             = P.float             lexer
 identifier        = P.identifier        lexer
 natural           = P.natural           lexer

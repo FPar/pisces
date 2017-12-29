@@ -5,7 +5,7 @@ type Identifier = String
 newtype CompilationUnit = CompilationUnit [Function]
   deriving Show
 
-data Function = Function Identifier [VariableDeclaration] ReturnType Block
+data Function = Function Identifier [ParameterDeclaration] ReturnType Block
   deriving Show
 
 type ReturnType = Maybe Type
@@ -17,12 +17,13 @@ data Statement = Declaration Identifier Type (Maybe Expression)
                | Return Expression
   deriving Show
 
-data VariableDeclaration = VariableDeclaration Identifier Type
+data ParameterDeclaration = ParameterDeclaration Identifier Type
   deriving Show
 data Type = I64 | F64
   deriving Show
 
 data Expression = Atomic Atomic
+                | Variable String
                 | Math MathOp Expression Expression
                 | Comparison BoolOp Expression Expression
                 | Negate Expression
