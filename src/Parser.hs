@@ -67,7 +67,7 @@ expression :: Parsec String () Expression
 expression = buildExpressionParser table term <?> "expression"
 
 term :: Parsec String () Expression
-term = parens expression <|> atomicOrVariable <?> "simple expression"
+term = parens expression <|> atomicOrVariableOrInvocation <?> "simple expression"
 
 table = [ [ binary "*" (Math Multiplication) AssocLeft
           , binary "/" (Math Division) AssocLeft
@@ -81,12 +81,19 @@ table = [ [ binary "*" (Math Multiplication) AssocLeft
 binary :: String -> (a -> a -> a) -> Assoc -> Operator String u Identity a
 binary name fun = Infix (reservedOp name >> return fun)
 prefix :: String -> (a -> a) -> Operator String u Identity a
-prefix  name fun = Prefix (reservedOp name >> return fun)
+prefix name fun = Prefix (reservedOp name >> return fun)
 postfix :: String -> (a -> a) -> Operator String u Identity a
 postfix name fun = Postfix (reservedOp name >> return fun)
 
-atomicOrVariable :: Parsec String () Expression
-atomicOrVariable = Atomic <$> atomic <|> Variable <$> identifier
+atomicOrVariableOrInvocation :: Parsec String () Expression
+atomicOrVariableOrInvocation =
+  Atomic <$> atomic <|>
+  do
+    ident <- identifier
+    parameters <- optionMaybe $ parens $ commaSep expression
+    case parameters of
+      Nothing -> return $ Variable ident
+      Just parameters -> return $ Invocation ident parameters
 
 atomic :: Parsec String () Atomic
 atomic = naturalOrFloat >>=

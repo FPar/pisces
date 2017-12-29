@@ -27,7 +27,7 @@ data Expression = Atomic Atomic
                 | Math MathOp Expression Expression
                 | Comparison BoolOp Expression Expression
                 | Negate Expression
-                | Invocation Function [Expression]
+                | Invocation String [Expression]
   deriving Show
 data MathOp = Addition | Subtraction | Multiplication | Division | Modulo
   deriving Show
