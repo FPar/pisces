@@ -28,8 +28,10 @@ languageDef =
            , P.reservedNames   = [ "fn"
                                  , "return"
                                  , "var"
+                                 , "while"
                                  ]
            , P.reservedOpNames = [ "+", "-", "*", "/", "="
+                                 , "++", "--"
                                  , "==", "!=", "<", ">"
                                  , "&&", "||", "!"
                                  ]

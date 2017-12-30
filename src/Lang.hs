@@ -15,6 +15,8 @@ newtype Block = Block [Statement]
 data Statement = Declaration Identifier Type (Maybe Expression)
                | Assignment Identifier Expression
                | Return Expression
+               | While Expression Block
+               | Unary UnaryOp Expression
   deriving Show
 
 data ParameterDeclaration = ParameterDeclaration Identifier Type
@@ -24,7 +26,6 @@ data Type = I64 | F64
 
 data Expression = Atomic Atomic
                 | Variable String
-                | Unary UnaryOp Expression
                 | Math MathOp Expression Expression
                 | Comparison BoolOp Expression Expression
                 | Negate Expression

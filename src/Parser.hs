@@ -29,10 +29,11 @@ block :: Parsec String () Block
 block = Block <$> braces (many statement)
 
 statement :: Parsec String () Statement
-statement = do
-  stmt <- returnStmt <|> varStmt
-  semi
-  return stmt
+statement = returnStmt >>=> semi
+        <|> varStmt >>=> semi
+        <|> unaryStmt >>=> semi
+        <|> whileStmt
+        <|> assignmentStmt >>=> semi
 
 returnStmt :: Parsec String () Statement
 returnStmt = reserved "return" >> Return <$> expression
@@ -54,6 +55,17 @@ assignmentStmt = do
   expr <- expression
   return $ Assignment target expr
 
+unaryStmt :: Parsec String () Statement
+unaryStmt = (reservedOp "++" >> identifier >>= \ident -> return $ Unary Increment (Variable ident))
+        <|> (reservedOp "--" >> identifier >>= \ident -> return $ Unary Decrement (Variable ident))
+
+whileStmt :: Parsec String () Statement
+whileStmt = do
+  reserved "while"
+  condition <- parens expression
+  scope <- block
+  return $ While condition scope
+
 parameterDeclaration :: Parsec String () ParameterDeclaration
 parameterDeclaration = ParameterDeclaration <$> identifier >>= \ var -> colon >> var <$> langType
 
@@ -69,10 +81,7 @@ expression = buildExpressionParser table term <?> "expression"
 term :: Parsec String () Expression
 term = parens expression <|> atomicOrVariableOrInvocation <?> "simple expression"
 
-table = [ [ prefix "++" (Unary Increment)
-          , prefix "--" (Unary Decrement)
-          ]
-        , [ binary "*" (Math Multiplication) AssocLeft
+table = [ [ binary "*" (Math Multiplication) AssocLeft
           , binary "/" (Math Division) AssocLeft
           , binary "%" (Math Modulo) AssocLeft
           ]
@@ -103,3 +112,6 @@ atomic = naturalOrFloat >>=
   \ case
     Left nat -> return $ Integer nat
     Right float -> return $ Float float
+
+(>>=>) :: Monad m => m a -> m b -> m a
+a >>=> b = a >>= \x -> b >> return x
