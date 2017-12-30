@@ -14,7 +14,7 @@ parseUnit :: SourceName -> String -> Either ParseError CompilationUnit
 parseUnit = parse compilationUnit
 
 compilationUnit :: Parsec String () CompilationUnit
-compilationUnit = CompilationUnit <$> many function
+compilationUnit = whiteSpace >> CompilationUnit <$> many function
 
 function :: Parsec String () Function
 function = do

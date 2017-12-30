@@ -39,12 +39,16 @@ genFunction (Lang.Function name parameters returnType (Block definition)) = do
   modify $ \ s -> s { locals = map (\ (ParameterDeclaration name langType) -> (name, LocalReference (llvmType langType) (fromString name))) parameters }
 
   let retty = llvmReturnType returnType
-  (ConstantOperand (C.GlobalReference fn _)) <- function (fromString name) (map parameter parameters) (llvmReturnType returnType) $ \ _ ->
-    block `named` "entry" >> mapM_ genStatement definition
+  let argTypes = map (\ (ParameterDeclaration _ langType) -> llvmType langType) parameters
+  let fn = FunctionType {resultType = retty, argumentTypes = argTypes, isVarArg = False}
   let op = ConstantOperand $ C.GlobalReference (PointerType fn (AddrSpace 0)) (Name $ fromString name)
-
   symbols <- gets symtab
   modify $ \ s -> s { symtab = (name, op) : symbols }
+
+  function (fromString name) (map parameter parameters) (llvmReturnType returnType) $ \ _ ->
+    block `named` "entry" >> mapM_ genStatement definition
+
+  return ()
 
 parameter :: ParameterDeclaration -> (AST.Type, ParameterName)
 parameter (ParameterDeclaration identifier langType) = (llvmType langType, fromString identifier)
