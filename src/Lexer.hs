@@ -25,10 +25,9 @@ languageDef =
            , P.commentLine     = "//"
            , P.identStart      = letter
            , P.identLetter     = alphaNum
-           , P.reservedNames   = [ "fn"
-                                 , "return"
+           , P.reservedNames   = [ "fn", "return"
                                  , "var"
-                                 , "while"
+                                 , "if", "else"
                                  ]
            , P.reservedOpNames = [ "+", "-", "*", "/", "="
                                  , "++", "--"

@@ -12,6 +12,7 @@ import Control.Monad.State
 import LLVM.AST.AddrSpace
 import LLVM.AST hiding (function)
 import LLVM.AST.Float
+import qualified LLVM.AST.IntegerPredicate as C
 import LLVM.AST.Type as AST
 import qualified LLVM.AST.Float as F
 import qualified LLVM.AST.Constant as C
@@ -50,7 +51,6 @@ parameter (ParameterDeclaration identifier langType) = (llvmType langType, fromS
 
 genStatement :: Lang.Statement -> IRBuilderT (ModuleBuilderT (State CodegenState)) ()
 genStatement (Return expr) = ret =<< genExpression expr
-genStatement (While condition (Block statements)) = block >> mapM_ genStatement statements
 genStatement (Declaration name langType Nothing) = return ()
 genStatement (Declaration name langType (Just definition)) = do
   op <- genExpression definition
@@ -64,11 +64,22 @@ genStatement (Unary op (Variable x)) = do
   let one = ConstantOperand (C.Int 64 1)
   let ins = case op of
               Increment -> add one
-              Decrement -> sub one
+              Decrement -> flip sub one
   var <- genExpression (Variable x)
   var' <- ins var
   lcls <- gets locals
   modify $ \ s -> s { locals = (x, var') : lcls }
+genStatement (If cond (Block thenBlock) elseBlock) = do
+  result <- genComparison cond
+  condBr result (Name "then") (Name "else")
+
+  block `named` "then"
+  mapM_ genStatement thenBlock
+
+  block `named` "else"
+  case elseBlock of
+    Nothing -> return ()
+    Just (Block elseBlock) -> mapM_ genStatement elseBlock
 
 genExpression :: Lang.Expression -> IRBuilderT (ModuleBuilderT (State CodegenState)) Operand
 genExpression (Atomic a) = return $ genAtomic a
@@ -93,6 +104,19 @@ genExpression (Math op a b) =
         Modulo -> urem
     in
   genExpression a >>= \opa -> genExpression b >>= \opb -> ins opa opb
+
+genComparison :: Lang.Expression -> IRBuilderT (ModuleBuilderT (State CodegenState)) Operand
+genComparison (Comparison op a b) = do
+  let ty = case op of
+        Eq -> C.EQ
+        Ne -> C.NE
+        Lt -> C.SLT
+        Gt -> C.SGT
+        Le -> C.SLE
+        Ge -> C.SGE
+  opa <- genExpression a
+  opb <- genExpression b
+  icmp ty opa opb
 
 genAtomic :: Atomic -> Operand
 genAtomic (Integer i) = ConstantOperand (C.Int 64 i)

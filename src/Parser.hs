@@ -26,13 +26,19 @@ function = do
   return $ Function ident parameters retType definition
 
 block :: Parsec String () Block
-block = Block <$> braces (many statement)
+block = do
+  definition <- braces (do
+    statements <- many statement
+    ifStmt <- optionMaybe ifStmt
+    case ifStmt of
+      Nothing -> return statements
+      Just stmt -> return $ statements ++ [stmt])
+  return $ Block definition
 
 statement :: Parsec String () Statement
 statement = returnStmt <* semi
         <|> varStmt <* semi
         <|> unaryStmt <* semi
-        <|> whileStmt
         <|> assignmentStmt <* semi
 
 returnStmt :: Parsec String () Statement
@@ -59,12 +65,13 @@ unaryStmt :: Parsec String () Statement
 unaryStmt = (reservedOp "++" >> identifier >>= \ident -> return $ Unary Increment (Variable ident))
         <|> (reservedOp "--" >> identifier >>= \ident -> return $ Unary Decrement (Variable ident))
 
-whileStmt :: Parsec String () Statement
-whileStmt = do
-  reserved "while"
+ifStmt :: Parsec String () Statement
+ifStmt = do
+  reserved "if"
   condition <- parens expression
   scope <- block
-  return $ While condition scope
+  elseBlock <- optionMaybe (reserved "else" >> block)
+  return $ If condition scope elseBlock
 
 parameterDeclaration :: Parsec String () ParameterDeclaration
 parameterDeclaration = ParameterDeclaration <$> identifier >>= \ var -> colon >> var <$> langType
@@ -87,6 +94,13 @@ table = [ [ binary "*" (Math Multiplication) AssocLeft
           ]
         , [ binary "+" (Math Addition) AssocLeft
           , binary "-" (Math Subtraction) AssocLeft
+          ]
+        , [ binary "==" (Comparison Eq) AssocLeft
+          , binary "!=" (Comparison Ne) AssocLeft
+          , binary "<" (Comparison Lt) AssocLeft
+          , binary ">" (Comparison Gt) AssocLeft
+          , binary "<=" (Comparison Le) AssocLeft
+          , binary ">=" (Comparison Ge) AssocLeft
           ]
         ]
 

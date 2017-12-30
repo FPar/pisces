@@ -15,7 +15,7 @@ newtype Block = Block [Statement]
 data Statement = Declaration Identifier Type (Maybe Expression)
                | Assignment Identifier Expression
                | Return Expression
-               | While Expression Block
+               | If Expression Block (Maybe Block)
                | Unary UnaryOp Expression
   deriving Show
 
