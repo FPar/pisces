@@ -29,11 +29,11 @@ block :: Parsec String () Block
 block = Block <$> braces (many statement)
 
 statement :: Parsec String () Statement
-statement = returnStmt >>=> semi
-        <|> varStmt >>=> semi
-        <|> unaryStmt >>=> semi
+statement = returnStmt <* semi
+        <|> varStmt <* semi
+        <|> unaryStmt <* semi
         <|> whileStmt
-        <|> assignmentStmt >>=> semi
+        <|> assignmentStmt <* semi
 
 returnStmt :: Parsec String () Statement
 returnStmt = reserved "return" >> Return <$> expression
@@ -112,6 +112,3 @@ atomic = naturalOrFloat >>=
   \ case
     Left nat -> return $ Integer nat
     Right float -> return $ Float float
-
-(>>=>) :: Monad m => m a -> m b -> m a
-a >>=> b = a >>= \x -> b >> return x
