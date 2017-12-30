@@ -24,10 +24,13 @@ data Type = I64 | F64
 
 data Expression = Atomic Atomic
                 | Variable String
+                | Unary UnaryOp Expression
                 | Math MathOp Expression Expression
                 | Comparison BoolOp Expression Expression
                 | Negate Expression
                 | Invocation String [Expression]
+  deriving Show
+data UnaryOp = Increment | Decrement
   deriving Show
 data MathOp = Addition | Subtraction | Multiplication | Division | Modulo
   deriving Show

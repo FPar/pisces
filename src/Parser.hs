@@ -69,7 +69,10 @@ expression = buildExpressionParser table term <?> "expression"
 term :: Parsec String () Expression
 term = parens expression <|> atomicOrVariableOrInvocation <?> "simple expression"
 
-table = [ [ binary "*" (Math Multiplication) AssocLeft
+table = [ [ prefix "++" (Unary Increment)
+          , prefix "--" (Unary Decrement)
+          ]
+        , [ binary "*" (Math Multiplication) AssocLeft
           , binary "/" (Math Division) AssocLeft
           , binary "%" (Math Modulo) AssocLeft
           ]

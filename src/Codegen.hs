@@ -62,6 +62,13 @@ genExpression (Invocation name parameters) = do
     Just callee -> do
       parameters <- mapM genExpression parameters
       call callee (map (\ p -> (p, [])) parameters)
+genExpression (Unary op x) =
+  let one = ConstantOperand (C.Int 64 1)
+      ins = case op of
+              Increment -> add one
+              Decrement -> sub one
+   in
+   genExpression x >>= ins
 genExpression (Math op a b) =
   let ins = case op of
         Addition -> add
