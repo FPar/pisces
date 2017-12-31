@@ -33,3 +33,11 @@ install:
 
 script:
   - stack --no-terminal test --haddock --no-haddock-deps
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: $(stack path --dist-dir)/doc/html/pisces
+  on:
+    branch: master
