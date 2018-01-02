@@ -1,5 +1,6 @@
 {-# LANGUAGE LambdaCase #-}
 
+-- | Main program of pscs compiler.
 module Main where
 
 import Lang
@@ -20,6 +21,7 @@ main = getArgs >>=
     []         -> putStrLn "No filename specified."
     _          -> putStrLn "Too many arguments specified."
 
+-- | Compiles the provided file.
 compileFile :: String -> IO ()
 compileFile filename =
   loadUnit filename >>= \case
@@ -30,6 +32,7 @@ compileFile filename =
       withContext $ \context ->
         withModuleFromAST context llvmAST (moduleLLVMAssembly >=> BS.writeFile "a.ll")
 
+-- | Loads and parses the provided file.
 loadUnit :: String -> IO (Either String CompilationUnit)
 loadUnit filename = readFile filename >>= \ src ->
   let cu = parseUnit "" src in

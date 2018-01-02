@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | Generates LLVM ASTs.
 module Codegen
     ( genLLVM
     ) where
@@ -31,6 +32,7 @@ data CodegenState = CodegenState { symtab :: SymbolTable, locals :: SymbolTable 
 emptyCodegen :: CodegenState
 emptyCodegen = CodegenState [] []
 
+-- | Generates an LLVM module for the given compilation unit.
 genLLVM :: CompilationUnit -> Module
 genLLVM (CompilationUnit functions) = evalState (buildModuleT "program" $ mapM_ genFunction functions) emptyCodegen
 

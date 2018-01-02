@@ -1,5 +1,6 @@
 {-# LANGUAGE LambdaCase #-}
 
+-- | Top level parser for parsing files into an AST.
 module Parser
     ( parseUnit
     ) where
@@ -10,6 +11,7 @@ import Lexer
 import Text.Parsec
 import Text.Parsec.Expr
 
+-- | Parses the given file to a compilation unit.
 parseUnit :: SourceName -> String -> Either ParseError CompilationUnit
 parseUnit = parse compilationUnit
 
