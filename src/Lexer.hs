@@ -1,10 +1,9 @@
+-- | Contains low level parsers for string tokenization.
 module Lexer
     ( braces
     , colon
     , commaSep
-    , float
     , identifier
-    , natural
     , naturalOrFloat
     , parens
     , reserved
@@ -38,18 +37,28 @@ languageDef =
 
 lexer = P.makeTokenParser languageDef
 
+-- | Parses the given symbol.
 symbol            = P.symbol            lexer
 
+-- | Wraps the parser in braces.
 braces            = P.braces            lexer
+-- | Parses ":".
 colon             = P.colon             lexer
+-- | Parses any number of the provided parser seperated by commas.
 commaSep          = P.commaSep          lexer
-float             = P.float             lexer
+-- | Parses a valid identifier.
 identifier        = P.identifier        lexer
-natural           = P.natural           lexer
+-- | Parses an integer of float literal.
 naturalOrFloat    = P.naturalOrFloat    lexer
+-- | Wraps the parser in parentheses.
 parens            = P.parens            lexer
+-- | Parses a reserved identifier.
 reserved          = P.reserved          lexer
+-- | Parser a reserver operator.
 reservedOp        = P.reservedOp        lexer
+-- | Parses "->".
 rightArrow        = symbol "->"
+-- | Parses ";".
 semi              = P.semi              lexer
+-- | Parses all sorts of white space.
 whiteSpace        = P.whiteSpace        lexer
