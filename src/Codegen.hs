@@ -15,11 +15,12 @@ import LLVM.AST hiding (function)
 import LLVM.AST.Float
 import qualified LLVM.AST.IntegerPredicate as C
 import LLVM.AST.Type as AST
+import LLVM.AST.Typed
 import qualified LLVM.AST.Float as F
 import qualified LLVM.AST.Constant as C
 
 import LLVM.IRBuilder.Constant
-import LLVM.IRBuilder.Instruction
+import LLVM.IRBuilder.Instruction hiding (sdiv)
 import LLVM.IRBuilder.Module
 import LLVM.IRBuilder.Monad
 
@@ -137,3 +138,7 @@ llvmType t =
   case t of
     I64 -> i64
     F64 -> AST.double
+
+sdiv :: MonadIRBuilder m => Operand -> Operand -> m Operand
+sdiv a b = emitInstr (typeOf a) $ SDiv False a b []
+
