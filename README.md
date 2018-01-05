@@ -1,4 +1,4 @@
-# pisces <>< [![Build Status](https://travis-ci.org/ob-fun-ws17/studienarbeit-pisces.svg?branch=master)](https://travis-ci.org/ob-fun-ws17/studienarbeit-pisces)
+# pisces <>< [![Build Status](https://travis-ci.org/FPar/pisces.svg?branch=master)](https://travis-ci.org/FPar/pisces)
 
 ## What is pisces?
 
@@ -47,4 +47,4 @@ clang a.o
 ## Documentation
 
 * [Pisces language reference](/doc/language.md)
-* [API](https://ob-fun-ws17.github.io/studienarbeit-pisces/)
+* [API](https://fpar.github.io/pisces/)
